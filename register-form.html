@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--[if lt IE 8]>
+  <script>alert('您的浏览器版本太低啦~建议使用其他浏览器浏览~')</script>
+<![endif]-->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <title>注册</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body class='relative'>
+  <form action="" class="register-form">
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">登录账号</span>
+      <input type="text" class="item-input right" id='UserName' placeholder='请输入您的用户名'>
+    </li>
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">登录密码</span>
+      <input type="password" class="item-input right" id='UserPwd' placeholder='请输入您的密码'>
+    </li>
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">确认密码</span>
+      <input type="password" class="item-input right" id='PwdAgain' placeholder='再输一次密码'>
+    </li>
+    <!-- 选择注册方式 -->
+    <li class="overflow form-item">
+     <span class="item-banner left text_right">账号类型</span>
+     <div class="right code-wrap"> 
+      <label  class='left checked'>个人
+        <input type="radio" name="kind" id="presonal" checked value='个人' class='radio'/>
+      </label>
+      <label class='left'>企业
+        <input type="radio" name="kind" id="company" value='企业' class='radio'/>
+      </label>
+     </div>
+    </li>
+<!-- 企业注册新增 -->
+    <li class="overflow form-item company-extra none">
+      <span class="item-banner left text_right">营业执照</span>
+      <input type="text" class="item-input right" placeholder='请输入营业执照注册号'>
+    </li>
+    <li class="overflow form-item company-extra none">
+      <span class="item-banner left text_right">企业名</span>
+      <input type="text" class="item-input right" placeholder='请输入企业名'>
+    </li>
+<!-- end -->
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">真实姓名</span>
+      <input type="text" class="item-input right" id='RelName' placeholder='请输入真实姓名'>
+    </li>
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">身份证号</span>
+      <input type="text" class="item-input right" placeholder='请输入身份证号' id='IdCard'>
+    </li>
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">手机号码</span>
+      <input type="text" class="item-input right" id='Tel' placeholder='请输入手机号码'>
+    </li>
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">联系QQ</span>
+      <input type="text" class="item-input right" id='QQ' placeholder='请输入您的QQ号码'>
+    </li>
+    <li class="overflow form-item">
+      <span class="item-banner left text_right">验证码</span>
+      <input type="text" class="item-input right" placeholder='请输入下图验证码' maxlength='4'>
+    </li>
+    <!-- 生成验证码 -->
+    <li class="overflow form-item">
+     <div class="right code-wrap">
+       <img src="img/code.png" alt="" class="code left" id="J_CodeImg">
+       <a id="J_ChangeCode" class="left code-change" style='cursor:pointer'>看不清楚，换一张</a>
+     </div>
+    </li>
+    <li class="overflow form-item">
+     <div class="right code-wrap"> 
+       <img src="img/checked.png" alt="" class="agree left xieyi">
+       <span class="left code-change xieyi" style='color:#ccc'>我已阅读并同意<a href="agreement.html" target="_blank" style='color:#33b8f5'>《平台协议》</a></span>
+     </div>
+    </li>
+
+    <li class="overflow form-item">
+     <div class="right code-wrap"> 
+       <input type="submit" class='submit'>
+     </div>
+    </li>
+  </form>
+</body>
+<script type="text/javascript" src='js/jquery-1.11.0.min.js'></script>
+<script type="text/javascript" src='js/layer.js'></script>
+<script type="text/javascript" src='js/Validation.js'></script>
+<script type="text/javascript">
+// 兼容IE
+   if(!placeholderSupport()){   // 判断浏览器是否支持 placeholder
+        $('[placeholder]').focus(function() {
+            var input = $(this);
+            if (input.val() == input.attr('placeholder')) {
+                input.val('');
+                input.removeClass('placeholder');
+            }
+        }).blur(function() {
+            var input = $(this);
+            if (input.val() == '' || input.val() == input.attr('placeholder')) {
+                input.addClass('placeholder');
+                input.val(input.attr('placeholder'));
+            }
+        }).blur();
+    };
+    function placeholderSupport() {
+        return 'placeholder' in document.createElement('input');
+    }
+//end
+  $('input[type="radio"]').change(function(){
+    $('label').removeClass('checked');
+    $(this).parent().addClass('checked');
+    $(this).attr('id')=='company'?$('.company-extra').removeClass('none'):$('.company-extra').addClass('none');
+  });
+
+// 表单验证
+var src = "/User/ShowVerifyCode"; //图片的src
+var t1 = new Date().getTime(); //时间戳
+// $('#J_CodeImg').attr('src', src + '?t=' + t1);
+//请求新的验证码图片
+$('#J_ChangeCode').on('click', function (ev) {
+    ev.preventDefault();
+    var t = new Date().getTime(); //时间戳
+    // $('#J_CodeImg').attr('src', src + '?t=' + t);
+});
+// 用户名
+ $("#UserName").blur(function () {
+        var userName = $(this).val();
+        if (userName == "") {
+          layer.tips('注册账号不能为空', '#UserName', {tips: 1});
+          $(this).addClass('border-red');
+            // showMsg("UserName", "注册账号不能为空");
+        } else {
+            if (checkMail(userName)) {
+                $.ajax({
+                    type: "POST",
+                    url: "/User/CheckUserName/?name=" + escape(userName),
+                    data: "{}",
+                    //async: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data == "Success") {
+                            $(this).removeClass('border-red');
+                        } else if (data == "Fail") {
+                            layer.tips('该账号已注册，请输入其他账号', '#UserName', {tips: 1});
+                            $(this).addClass('border-red')&&$(this).val("");
+                        } else {
+                          layer.tips('注册账号验证失败', '#UserName', {tips: 1});
+                          $(this).addClass('border-red')&&$(this).val("");
+                        }
+                    },
+                    error: function () {
+                        return false;
+                    }
+                });
+            } else { 
+              layer.tips('请输入邮箱格式的注册账号', '#UserName', {tips: 1});
+                $(this).addClass('border-red')&&$(this).val("");
+            }
+        }
+  });
+// 密码
+  $("#UserPwd").blur(function () {
+        var userPwd = $(this).val();
+        if (userPwd == "") {
+          layer.tips('登录密码不能为空', '#UserPwd', {tips: 1});
+          $(this).addClass('border-red');
+        } else {
+            if (checkPassword(userPwd)) {
+               $(this).removeClass('border-red');
+            } else {
+              layer.tips('请输入6到16位由字母和数字组成的密码', '#UserPwd', {tips: 1});
+              $(this).addClass('border-red')&&$(this).val("");
+            }
+        }
+    });
+// 身份证
+    $("#IdCard").blur(function () {
+        var idCard = $(this).val();
+        if (idCard == "") {
+          layer.tips('身份证号码不能为空', '#IdCard', {tips: 1});
+          $(this).addClass('border-red');
+        } else {
+            if (checkIdCard(idCard)) {
+                $.ajax({
+                    type: "POST",
+                    url: "/User/CheckIdCardNo/?idCardNo=" + escape(idCard),
+                    data: "{}",
+                    //async: false,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data == "Success") {
+                            $(this).removeClass('border-red');
+                        } else {
+                          layer.tips('身份证号码已注册', '#IdCard', {tips: 1});
+                          $(this).addClass('border-red')&&$(this).val("");
+                        }
+                    },
+                    error: function () {
+                        return false;
+                    }
+                });
+            } else {
+                      layer.tips('请输入合法的身份证号码', '#IdCard', {tips: 1});
+                      $(this).addClass('border-red')&&$(this).val("");
+            }
+        }
+    });
+// 确认密码
+    $("#PwdAgain").blur(function () {
+        var pwdAgain = $(this).val();
+        if (pwdAgain == "") {
+          layer.tips('请再次输入登录密码', '#PwdAgain', {tips: 1});
+          $(this).addClass('border-red');
+        } else {
+            if ($("#UserPwd").val() == pwdAgain) {
+                $(this).removeClass('border-red');
+            } else {
+              layer.tips('两次输入的登录密码不一致', '#PwdAgain', {tips: 1});
+              $(this).addClass('border-red')&&$(this).val("");
+            }
+        }
+    });
+// 真实姓名
+    $("#RelName").blur(function () {
+        var relName = $(this).val();
+        if (relName == "") {
+          layer.tips('用户姓名不能为空', '#RelName', {tips: 1});
+          $(this).addClass('border-red');
+        } else {
+            if (!checkChinese(relName)) {
+              layer.tips('请输入中文字符格式的姓名', '#RelName', {tips: 1});
+              $(this).addClass('border-red')&&$(this).val("");
+            } else {
+                var len = relName.length;
+                if (len < 2 || len > 6) {
+                  layer.tips('姓名的有效长度为2到6位', '#RelName', {tips: 1});
+                  $(this).addClass('border-red')&&$(this).val("");
+                } else {
+                   $(this).removeClass('border-red');
+                }
+            }
+        }
+    });
+// qq
+    $("#QQ").blur(function () {
+        var qq = $(this).val();
+        if (qq == "") {
+          layer.tips('请输入QQ号码', '#QQ', {tips: 1});
+          $(this).addClass('border-red');
+        } else {
+            if (checkQQ(qq)) {
+                $(this).removeClass('border-red');
+            } else {
+              layer.tips('请输入正确的QQ号码', '#QQ', {tips: 1});
+              $(this).addClass('border-red')&&$(this).val("");
+            }
+        }
+    });
+// 电话号码
+    $("#Tel").blur(function () {
+        var phone = $(this).val();
+        if (phone == "") {
+          layer.tips('请输入手机号码', '#Tel', {tips: 1});
+          $(this).addClass('border-red');
+        } else {
+            if (checkTel(phone)) {
+                $(this).removeClass('border-red');
+            } else {
+              layer.tips('请输入可用的手机号码', '#Tel', {tips: 1});
+              $(this).addClass('border-red')&&$(this).val("");
+            }
+        }
+    });
+// 提交
+  $('.submit').click(function()
+  {
+    if(!isAgree)
+      return false;
+  })
+
+    $('#frmRegister').submit(function () {
+        if (errList.length == 0) {
+            $.ajax({
+                url: this.action,
+                type: this.method,
+                data: $(this).serialize(),
+                success: function (result) {
+                    if (result == "Success") {
+                        //alert("注册成功，进入登录页面");
+                        DLib.Message.Alert('注册成功，进入登录页面', 'warning');
+                        $(".ks-stdmod-footer").find("button").click(function () {
+                            document.location = '/User/Login';
+                        });
+                    } else if (result == "Error") {
+                        DLib.Message.Alert('注册失败', 'warning');
+                    } else if (result == "VerifyCode") {
+                        DLib.Message.Alert('验证码错误', 'warning');
+                        var t = new Date().getTime(); //时间戳
+                        $('#J_CodeImg').attr('src', src + '?t=' + t);
+                        $('#J_Code').val("");
+                    } else {
+                        showResult(result);
+                    }
+                },
+                error: function (result) {
+                    DLib.Message.Alert('提交失败', 'warning');
+                }
+            });
+        }
+        return false;
+    });
+function showResult(result){
+    var id = 
+    result.indexOf("注册账号") != -1 ? "UserName" :
+    result.indexOf("不一致") != -1 ? "PwdAgain" :
+    result.indexOf("密码") != -1 ? "UserPwd" :
+    result.indexOf("姓名") != -1 ? "RelName" :
+    result.indexOf("身份证号码") != -1 ? "IdCard" : 
+    result.indexOf("手机号码") != -1 ? "Tel" : 
+    result.indexOf("QQ号码") != -1 ? "QQ" : "";
+    if(id != ""){
+        showMsg(id, result);
+    }
+}
+
+// 用户协议
+  var isAgree=true;
+  $('.xieyi').click(function()
+  {
+    isAgree?(function(){isAgree=false;$('.agree').attr('src', 'img/uncheck.png');$('.submit').addClass('gray')})():(function(){isAgree=true;$('.agree').attr('src', 'img/checked.png');$('.submit').removeClass('gray')})();
+  })
+
+</script>
+
+</html>
